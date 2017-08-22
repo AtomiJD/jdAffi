@@ -1,0 +1,20 @@
+﻿<Page
+    x:Class="jdAffi.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:jdAffi"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Width="1920" Height="1080">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Width="1900" Height="1060">
+            <TextBox x:Name="txtTalkToMe" Text="I am monkey" Margin="10" />
+            <Button x:Name="btnTalk" Content="Sprich!"  Margin="10" HorizontalAlignment="Center" Click="btnTalk_Click"/>
+            <TextBox x:Name="txtDebug" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="329" Width="380" FontSize="8" Margin="0,0,-241,-233"/>
+        </StackPanel>
+        <MediaElement x:Name="media" HorizontalAlignment="Left" Height="100" Margin="0,110,0,-114" VerticalAlignment="Top" Width="100"/>
+
+    </Grid>
+</Page>

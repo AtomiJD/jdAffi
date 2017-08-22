@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<grammar
+  version="1.0"
+  xml:lang="en-US"
+  root="rootRule"
+  xmlns="http://www.w3.org/2001/06/grammar"
+  tag-format="semantics/1.0">
+  <rule id="rootRule">
+    <one-of>
+      <item>
+        <ruleref uri="#greeting"/>
+      </item>
+      <item>
+        <ruleref uri="#start"/>
+      </item>
+      <item>
+        <ruleref uri="#stop"/>
+      </item>
+      <item>
+        <ruleref uri="#filling"/>
+      </item>
+      <item>
+        <ruleref uri="#ficksau"/>
+      </item>
+      <item>
+        <ruleref uri="#overrule"/>
+      </item>
+     </one-of>
+  </rule>
+  <rule id="greeting">
+    <one-of>    
+      <item>hello</item>
+    </one-of>
+    <ruleref uri="#monkey"/>
+  </rule>
+  <rule id="monkey">
+    <one-of>
+      <item>taffy</item>    
+    </one-of>
+  </rule>
+  <rule id="canwords">
+    <one-of>
+      <item>can</item>    
+    </one-of>
+  </rule>
+  <rule id="fillwords">
+    <one-of>
+      <item>fill</item>    
+    </one-of>
+  </rule>
+  <rule id="startwords">
+    <one-of>
+      <item>begin</item>
+    </one-of>
+  </rule>
+  <rule id="stopwords">
+    <one-of>
+      <item>stop</item>
+      <item>end</item>
+    </one-of>
+  </rule>
+  <rule id="wateringwords">
+    <one-of>
+      <item>watering</item>
+    </one-of>
+  </rule>
+  <rule id="start">
+    <ruleref uri="#startwords"/>
+    <ruleref uri="#wateringwords"/>
+  </rule>
+  <rule id="stop">
+    <ruleref uri="#stopwords"/>
+    <ruleref uri="#wateringwords"/>
+  </rule>
+  <rule id="filling">
+    <ruleref uri="#fillwords"/>
+    <ruleref uri="#canwords"/>
+  </rule>
+  <rule id="ficksau">
+    <one-of>
+      <item>ficksau</item>
+      <item>asshole</item>
+    </one-of>
+  </rule>
+  <rule id="overrule">
+    <one-of>
+      <item>overrule</item>
+    </one-of>
+  </rule>
+</grammar>
