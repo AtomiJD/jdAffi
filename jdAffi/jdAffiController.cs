@@ -13,9 +13,8 @@ namespace jdAffi
     public class jdAffiController
     {
         private I2cDevice devArduino;
-        private jdBmp180Sensor jdBmp180;
         private Timer periodicTimer;
-        private string retValue;
+        private string retValue = "00000";
 
         public jdAffiController()
         {
@@ -24,13 +23,20 @@ namespace jdAffi
 
         private async void Init()
         {
-            var settings = new I2cConnectionSettings(0x40);
-            settings.BusSpeed = I2cBusSpeed.StandardMode;
-            string aqs = I2cDevice.GetDeviceSelector("I2C1");
-            var dis = await DeviceInformation.FindAllAsync(aqs).AsTask();
-            devArduino = await I2cDevice.FromIdAsync(dis[0].Id, settings);
-           // InitializeSensors();
-           periodicTimer = new Timer(TimerCallback, null, 0, 1000); 
+            try
+            {
+                var settings = new I2cConnectionSettings(0x40);
+                settings.BusSpeed = I2cBusSpeed.StandardMode;
+                string aqs = I2cDevice.GetDeviceSelector("I2C1");
+                var dis = await DeviceInformation.FindAllAsync(aqs).AsTask();
+                devArduino = await I2cDevice.FromIdAsync(dis[0].Id, settings);
+            }
+            catch (Exception f)
+            {
+                Debug.WriteLine(f.Message);
+            }
+            // InitializeSensors();
+            periodicTimer = new Timer(TimerCallback, null, 0, 1000); 
         }
 
         public string Values
@@ -45,22 +51,6 @@ namespace jdAffi
             }
         }
 
-        private async void InitializeSensors()
-        {
-            string calibrationData;
-
-            try
-            {
-                jdBmp180 = new jdBmp180Sensor();
-                await jdBmp180.InitializeAsync();
-                calibrationData = jdBmp180.CalibrationData.ToString();
-            }
-            catch (Exception ex)
-            {
-                calibrationData = "Device Error! " + ex.Message;
-            }
-        }
-
         private void TimerCallback(object state)
         {
            // byte[] RegAddrBuf = new byte[] { 0x40 };
@@ -68,17 +58,17 @@ namespace jdAffi
 
             try
             {
-                devArduino.Read(ReadBuf); 
+                devArduino.Read(ReadBuf);
+                char[] cArray = System.Text.Encoding.UTF8.GetString(ReadBuf, 0, 5).ToCharArray();
+                String c = new String(cArray);
+                Debug.WriteLine(c);
+                retValue = c;
             }
             catch (Exception f)
             {
                 Debug.WriteLine(f.Message);
+                retValue = "00123";
             }
-
-            char[] cArray = System.Text.Encoding.UTF8.GetString(ReadBuf, 0, 5).ToCharArray();  
-            String c = new String(cArray);
-            Debug.WriteLine(c);
-            retValue = c;
         }
 
         public  void StartWatering()

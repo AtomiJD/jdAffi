@@ -98,6 +98,11 @@ void receiveData(int byteCount)
       digitalWrite(relayPin, HIGH);
       fillmode = 1;
     }
+    else if (v == 4)
+    {
+      digitalWrite(relayPin, LOW);
+      fillmode = 0;
+    }
   }
 }
 

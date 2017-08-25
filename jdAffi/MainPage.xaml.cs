@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
+using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 
 namespace jdAffi
 {
@@ -29,8 +30,36 @@ namespace jdAffi
         private CoreDispatcher dispatcher;
         private jdAffiController affC;
         private DispatcherTimer timer;
+        private DispatcherTimer chart_timer;
         private int overrule = 0;
         private int time_count = 0;
+        private int line_count = 0;
+        private int amount_count = 0;
+
+        public class Humidity
+        {
+            public string Name { get; set; }
+            public int Amount { get; set; }
+        }
+
+        List<Humidity> liste01 = new List<Humidity>();
+        List<Humidity> liste02 = new List<Humidity>();
+        List<Humidity> liste03 = new List<Humidity>();
+
+        private void LoadChartContents(int a1, int a2, int a3)
+        {
+            Random rand = new Random();
+
+            liste01.Add(new Humidity() { Name = string.Format("{0}", amount_count), Amount = a1 });
+            liste02.Add(new Humidity() { Name = string.Format("{0}", amount_count), Amount = a2 });
+            liste03.Add(new Humidity() { Name = string.Format("{0}", amount_count), Amount = a3 });
+            if (liste01.Count > 10) liste01.RemoveAt(0);
+            if (liste02.Count > 10) liste02.RemoveAt(0);
+            if (liste03.Count > 10) liste03.RemoveAt(0);
+            (LineChart.Series[0] as LineSeries).Refresh();
+            (LineChart.Series[1] as LineSeries).Refresh();
+            (LineChart.Series[2] as LineSeries).Refresh();
+        }
 
         public MainPage()
         {
@@ -53,9 +82,20 @@ namespace jdAffi
 
             affC = new jdAffiController();
 
-            timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(Timer_Tick);
+            this.timer = new DispatcherTimer();
+            timer.Tick += timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
+
+            this.chart_timer = new DispatcherTimer();
+            chart_timer.Tick += chart_timer_Tick;
+            chart_timer.Interval = new TimeSpan(0, 0, 1);
+
+            (LineChart.Series[0] as LineSeries).ItemsSource = liste01;
+            (LineChart.Series[1] as LineSeries).ItemsSource = liste02;
+            (LineChart.Series[2] as LineSeries).ItemsSource = liste03;
+
+            chart_timer.Start();
+
         }
 
         private async void InitializeSpeechRecognizer()
@@ -153,25 +193,40 @@ namespace jdAffi
         private async void Say(string rstrText)
         {
             await playTextAsync(rstrText);
+            RenderStatus(rstrText);
+            time_count = 0;
         }
-
+        
         private async void RenderStatus(string rstrText )
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 this.txtDebug.Text += rstrText + "\n";
+                line_count++;
+                if (line_count > 40)
+                {
+                    this.txtDebug.Text = "";
+                    line_count = 0;
+                }
             });
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        void timer_Tick(object sender, object e)
         {
-            //jdtodo
             time_count += 1;
             if (time_count > 10)
             {
                 time_count = 0;
                 timer.Stop();
             }
+        }
+
+        void chart_timer_Tick(object sender, object e)
+        {
+            amount_count++;
+            string strStatus = "";
+            strStatus = affC.Values;
+            LoadChartContents(Int32.Parse(strStatus.Substring(2, 1)), Int32.Parse(strStatus.Substring(3, 1)), Int32.Parse(strStatus.Substring(4, 1)));
         }
     }
 
